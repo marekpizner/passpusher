@@ -1,0 +1,23 @@
+version: "2"
+
+
+services:
+    client:
+        build: client
+        restart: always
+        ports:
+            - 3000:3000
+        volumes:
+            - ./client:/client
+            - /client/node_modules
+        stdin_open: true
+        tty: true
+
+    api:
+        build: api
+        restart: always
+        ports: 
+            - 3001:3001
+        volumes:
+            - ./api:/api
+            - /api/node_modules
