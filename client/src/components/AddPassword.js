@@ -1,7 +1,7 @@
 import React from 'react';
 import InputRange from 'react-input-range';
 import "react-input-range/lib/css/index.css";
-import { Form, Button } from 'semantic-ui-react'
+import { Form, Button, Message } from 'semantic-ui-react'
 
 class AddPassword extends React.Component {
 
@@ -12,7 +12,8 @@ class AddPassword extends React.Component {
             file: '',
             url: '',
             max_views: 4,
-            max_time: 1
+            max_time: 1,
+            error: ''
         };
     }
 
@@ -46,9 +47,13 @@ class AddPassword extends React.Component {
         fetch(url)
             .then(res => res.json())
             .then((data) => {
-                const url = 'http://localhost:3000/getpassword/' + data.url;
-                this.setState({ url: url })
-                console.log('Return: ' + url)
+                if (data.error !== undefined) {
+                    this.setState({ error: data.error, url: '' });
+                } else {
+                    const url = 'http://localhost:3000/getpassword/' + data.url;
+                    this.setState({ url: url });
+                    console.log('Return: ' + url);
+                }
             })
         event.preventDefault();
     }
@@ -64,6 +69,14 @@ class AddPassword extends React.Component {
                     </Form.Field>
                 </Form>
             )
+        } else {
+            if (this.state.error !== '') {
+                var urlshover = (
+                    <Message negative>
+                        <Message.Header>Error: {this.state.error}</Message.Header>
+                    </Message>
+                )
+            }
         }
 
         return (
