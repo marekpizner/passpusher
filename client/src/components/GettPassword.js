@@ -23,14 +23,15 @@ class GetPassword extends React.Component {
     }
 
     render() {
+        var shower;
         if (this.state.password === '' | this.state.password === undefined | this.state.max_views === 0) {
-            var shower = (
+            shower = (
                 <Message negative>
                     <Message.Header>Error: {this.state.error}</Message.Header>
                 </Message>
             )
         } else {
-            var shower = (
+            shower = (
                 <Form onSubmit={this.handleSubmit}>
                     <Form.Field>
                         <label>Password is: {this.state.password}</label>

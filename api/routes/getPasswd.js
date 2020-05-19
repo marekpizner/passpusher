@@ -7,8 +7,8 @@ var router = express.Router();
 /* GET users listing. */
 router.get('/:url', function (req, res, next) {
     var url = req.params['url'];
-    var data = storage.getPasswd(url)
-    console.log('GETT!!!!!')
+    var data = storage.getPasswd(url);
+
     if (data !== undefined) {
         var response = {
             'password': data.password,
@@ -18,8 +18,8 @@ router.get('/:url', function (req, res, next) {
     } else {
         var response = { data };
     }
-    console.log(response)
-    res.send(JSON.stringify(response))
+
+    res.send(JSON.stringify(response));
 });
 
 module.exports = router;

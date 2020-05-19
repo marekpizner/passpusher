@@ -44,7 +44,6 @@ var Storage = (function () {
         } catch (error) {
             console.log(error);
         }
-
     }
 
     Storage.prototype.getPasswd = function (url) {

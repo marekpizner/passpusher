@@ -59,8 +59,9 @@ class AddPassword extends React.Component {
     }
 
     render() {
+        var urlshover;
         if (this.state.url !== '') {
-            var urlshover = (
+            urlshover = (
                 <Form>
                     <Form.Field>
                         <label>Url to password:</label>
@@ -71,7 +72,7 @@ class AddPassword extends React.Component {
             )
         } else {
             if (this.state.error !== '') {
-                var urlshover = (
+                urlshover = (
                     <Message negative>
                         <Message.Header>Error: {this.state.error}</Message.Header>
                     </Message>
@@ -111,9 +112,7 @@ class AddPassword extends React.Component {
                     <Form.Button content="Submit" />
                 </Form >
                 {urlshover}
-
             </div >
-
         )
     }
 }
