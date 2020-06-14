@@ -23,15 +23,15 @@ class GetPassword extends React.Component {
     }
 
     render() {
-        var shower;
+        var content;
         if (this.state.password === '' | this.state.password === undefined | this.state.max_views === 0) {
-            shower = (
+            content = (
                 <Message negative>
                     <Message.Header>Error: {this.state.error}</Message.Header>
                 </Message>
             )
         } else {
-            shower = (
+            content = (
                 <Form onSubmit={this.handleSubmit}>
                     <Form.Field>
                         <label>Password is: {this.state.password}</label>
@@ -49,7 +49,7 @@ class GetPassword extends React.Component {
         return (
             <div>
                 <h2>Get password</h2>
-                {shower}
+                {content}
             </div>
         )
     }

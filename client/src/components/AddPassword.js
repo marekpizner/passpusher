@@ -47,7 +47,7 @@ class AddPassword extends React.Component {
         fetch(url)
             .then(res => res.json())
             .then((data) => {
-                if (data.error !== undefined) {
+                if (data.error !== '') {
                     this.setState({ error: data.error, url: '' });
                 } else {
                     const url = 'http://localhost:3000/getpassword/' + data.url;
