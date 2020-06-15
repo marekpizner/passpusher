@@ -4,7 +4,6 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-var indexRouter = require('./routes/index');
 var addPasswordRouter = require('./routes/addPsswd');
 var getPasswordRouter = require('./routes/getPasswd');
 var cors = require('cors');
@@ -23,7 +22,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(cors());
-app.use('/', indexRouter);
+
 app.use('/addpassword', addPasswordRouter);
 app.use('/getpassword', getPasswordRouter);
 

@@ -2,6 +2,7 @@ import React from 'react';
 import InputRange from 'react-input-range';
 import "react-input-range/lib/css/index.css";
 import { Form, Button, Message } from 'semantic-ui-react'
+import openpgp from 'openpgp';
 
 class AddPassword extends React.Component {
 
@@ -15,6 +16,7 @@ class AddPassword extends React.Component {
             max_time: 1,
             error: ''
         };
+
     }
 
     handleChange = (event) => {
@@ -56,6 +58,22 @@ class AddPassword extends React.Component {
                 }
             })
         event.preventDefault();
+    }
+
+    async componentDidMount() {
+        await openpgp.initWorker({ path: 'openpgp.worker.js' });
+        (async () => {
+            const { privateKeyArmored, publicKeyArmored, revocationCertificate } = await openpgp.generateKey({
+                userIds: [{ name: 'Jon Smith', email: 'jon@example.com' }], // you can pass multiple user IDs
+                curve: 'ed25519',                                           // ECC curve name
+                passphrase: 'super long and hard to guess secret'           // protects the private key
+            });
+
+            console.log(privateKeyArmored);     // '-----BEGIN PGP PRIVATE KEY BLOCK ... '
+            console.log(publicKeyArmored);      // '-----BEGIN PGP PUBLIC KEY BLOCK ... '
+            console.log(revocationCertificate); // '-----BEGIN PGP PUBLIC KEY BLOCK ... '
+        })();
+        await openpgp.destroyWorker();
     }
 
     render() {
