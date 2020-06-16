@@ -3,6 +3,7 @@ import InputRange from 'react-input-range';
 import "react-input-range/lib/css/index.css";
 import { Form, Button, Message } from 'semantic-ui-react'
 import openpgp from 'openpgp';
+import axios from 'axios';
 
 class AddPassword extends React.Component {
 
@@ -16,7 +17,6 @@ class AddPassword extends React.Component {
             max_time: 1,
             error: ''
         };
-
     }
 
     handleChange = (event) => {
@@ -44,36 +44,54 @@ class AddPassword extends React.Component {
             fileReader.readAsText(this.state.file[0]);
         }
 
-        // console.log('Content of file2:' + file_data);
-        const url = 'http://localhost:3001/addpassword/' + this.state.password + '/' + this.state.max_views + '/' + this.state.max_time;
-        fetch(url)
-            .then(res => res.json())
-            .then((data) => {
-                if (data.error !== '') {
-                    this.setState({ error: data.error, url: '' });
-                } else {
-                    const url = 'http://localhost:3000/getpassword/' + data.url;
-                    this.setState({ url: url });
-                    console.log('Return: ' + url);
-                }
-            })
+        const passwordToSend = {
+            "password": this.state.password,
+            "max_views": this.state.max_views,
+            "max_time": this.state.max_time
+        }
+
+        axios.post('http://localhost:3001/addpassword/', passwordToSend).then(res => {
+            const response_data = res.data
+            console.log(res)
+            if (response_data.error !== '') {
+                this.setState({ error: response_data.error, url: '' });
+            } else {
+                const url = 'http://localhost:3000/getpassword/' + response_data.url;
+                this.setState({ url: url });
+                console.log('Return: ' + url);
+            }
+        });
+
+        // // console.log('Content of file2:' + file_data);
+        // const url = 'http://localhost:3001/addpassword/' + + '/' + + '/' + ;
+        // fetch(url)
+        //     .then(res => res.json())
+        //     .then((data) => {
+        //         if (data.error !== '') {
+        //             this.setState({ error: data.error, url: '' });
+        //         } else {
+        //             const url = 'http://localhost:3000/getpassword/' + data.url;
+        //             this.setState({ url: url });
+        //             console.log('Return: ' + url);
+        //         }
+        //     })
         event.preventDefault();
     }
 
     async componentDidMount() {
-        await openpgp.initWorker({ path: 'openpgp.worker.js' });
-        (async () => {
-            const { privateKeyArmored, publicKeyArmored, revocationCertificate } = await openpgp.generateKey({
-                userIds: [{ name: 'Jon Smith', email: 'jon@example.com' }], // you can pass multiple user IDs
-                curve: 'ed25519',                                           // ECC curve name
-                passphrase: 'super long and hard to guess secret'           // protects the private key
-            });
+        // await openpgp.initWorker({ path: 'openpgp.worker.js' });
+        // (async () => {
+        //     const { privateKeyArmored, publicKeyArmored, revocationCertificate } = await openpgp.generateKey({
+        //         userIds: [{ name: 'Jon Smith', email: 'jon@example.com' }], // you can pass multiple user IDs
+        //         curve: 'ed25519',                                           // ECC curve name
+        //         passphrase: 'super long and hard to guess secret'           // protects the private key
+        //     });
 
-            console.log(privateKeyArmored);     // '-----BEGIN PGP PRIVATE KEY BLOCK ... '
-            console.log(publicKeyArmored);      // '-----BEGIN PGP PUBLIC KEY BLOCK ... '
-            console.log(revocationCertificate); // '-----BEGIN PGP PUBLIC KEY BLOCK ... '
-        })();
-        await openpgp.destroyWorker();
+        //     console.log(privateKeyArmored);     // '-----BEGIN PGP PRIVATE KEY BLOCK ... '
+        //     console.log(publicKeyArmored);      // '-----BEGIN PGP PUBLIC KEY BLOCK ... '
+        //     console.log(revocationCertificate); // '-----BEGIN PGP PUBLIC KEY BLOCK ... '
+        // })();
+        // await openpgp.destroyWorker();
     }
 
     render() {

@@ -23,25 +23,21 @@ var Storage = (function () {
         }
     }
 
-    Storage.prototype.createPasswordRecord = function (password, max_time, max_views) {
+    Storage.prototype.createPasswordRecord = function (data) {
         const date = Date.now();
 
         const record = {
-            'password': password,
-            'max_time': new Date(date + (max_time * TIME_SHIFT_IN_SECONDS)),
-            'max_views': max_views,
+            'password': data['password'],
+            'max_time': new Date(date + (data['max_time'] * TIME_SHIFT_IN_SECONDS)),
+            'max_views': data['max_views'],
         };
 
         return record;
     }
 
-    Storage.prototype.returnRecord = function () {
-
-    }
-
-    Storage.prototype.addPasswd = function (password, max_time, max_views) {
+    Storage.prototype.addPasswd = function (data) {
         this.cleanCache();
-        const password_record = this.createPasswordRecord(password, max_time, max_views);
+        const password_record = this.createPasswordRecord(data);
         return this.savePasswordRecordToStorage(password_record);
     };
 

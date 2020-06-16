@@ -4,19 +4,36 @@ var storage = new Storage()
 
 var router = express.Router();
 
-/* GET users listing. */
-router.get('/:passwd/:max_views/:max_time', function (req, res, next) {
+const parseData = (req) => {
   try {
-    var passwd = req.params['passwd'];
-    var max_views = req.params['max_views'];
-    var max_time = req.params['max_time'];
+
+    if ('password' in req.body && 'max_views' in req.body && 'max_time' in req.body) {
+      password = {
+        "password": req.body['password'],
+        "max_views": req.body['max_views'],
+        "max_time": req.body['max_time'],
+      }
+      return password;
+    } else {
+      throw 'Error parsing parameters'
+    }
   } catch (error) {
     console.log(error)
   }
+  return false;
+}
 
-  var response = storage.addPasswd(passwd, max_time, max_views);
+/* GET users listing. */
+router.post('/', function (req, res, next) {
+  const data = parseData(req);
 
-  res.send(JSON.stringify(response));
+  if (data) {
+    var response = storage.addPasswd(data);
+    console.log(response)
+    res.send(JSON.stringify(response));
+  } else {
+    next('Something went wrong!')
+  }
 });
 
 
