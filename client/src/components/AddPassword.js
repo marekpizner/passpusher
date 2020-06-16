@@ -46,7 +46,9 @@ class AddPassword extends React.Component {
 
         const passwordToSend = {
             "password": this.state.password,
+            "max_views_check": true,
             "max_views": this.state.max_views,
+            "max_time_check": true,
             "max_time": this.state.max_time
         }
 
@@ -62,19 +64,6 @@ class AddPassword extends React.Component {
             }
         });
 
-        // // console.log('Content of file2:' + file_data);
-        // const url = 'http://localhost:3001/addpassword/' + + '/' + + '/' + ;
-        // fetch(url)
-        //     .then(res => res.json())
-        //     .then((data) => {
-        //         if (data.error !== '') {
-        //             this.setState({ error: data.error, url: '' });
-        //         } else {
-        //             const url = 'http://localhost:3000/getpassword/' + data.url;
-        //             this.setState({ url: url });
-        //             console.log('Return: ' + url);
-        //         }
-        //     })
         event.preventDefault();
     }
 

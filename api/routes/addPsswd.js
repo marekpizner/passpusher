@@ -7,10 +7,18 @@ var router = express.Router();
 const parseData = (req) => {
   try {
 
-    if ('password' in req.body && 'max_views' in req.body && 'max_time' in req.body) {
+    if (
+      "password" in req.body &&
+      "max_views_check" in req.body &&
+      "max_views" in req.body &&
+      "max_time_check" in req.body &&
+      "max_time" in req.body
+    ) {
       password = {
         "password": req.body['password'],
+        'max_views_check': req.body['max_views_check'],
         "max_views": req.body['max_views'],
+        "max_time_check": req.body['max_time_check'],
         "max_time": req.body['max_time'],
       }
       return password;
