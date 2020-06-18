@@ -1,7 +1,7 @@
 import React from 'react';
 import InputRange from 'react-input-range';
 import "react-input-range/lib/css/index.css";
-import { Form, Button, Message, Checkbox } from 'semantic-ui-react'
+import { Form, Button, Message, Checkbox, TextArea } from 'semantic-ui-react'
 import openpgp from 'openpgp';
 import axios from 'axios';
 
@@ -48,9 +48,9 @@ class AddPassword extends React.Component {
 
         const passwordToSend = {
             "password": this.state.password,
-            "max_views_check": true,
+            "max_views_check": this.state.max_views_check,
             "max_views": this.state.max_views,
-            "max_time_check": true,
+            "max_time_check": this.state.max_time_check,
             "max_time": this.state.max_time
         }
 
@@ -109,7 +109,7 @@ class AddPassword extends React.Component {
 
         return (
             <div>
-                <Form onSubmit={this.handleSubmit}>
+                <Form onSubmit={this.handleSubmit} >
                     <h2>Add password</h2>
                     <Form.Input
                         label="Password"
@@ -118,14 +118,15 @@ class AddPassword extends React.Component {
                     />
 
                     <Form.Field >
+
+                        <label>
+                            Max views:
+                        </label>
                         <Checkbox 
                             toggle
                             value={this.state.max_views_check}
                             onChange={value => this.setState({ max_views_check: !this.state.max_views_check })}
                         />
-                        <label>
-                            Max views:
-                        </label>
                         <InputRange
                             disabled={this.state.max_views_check}
                             maxValue={10}
@@ -135,14 +136,15 @@ class AddPassword extends React.Component {
                     </Form.Field>
 
                     <Form.Field>
-                    <Checkbox 
+
+                        <label>
+                            Minutes to live:
+                        </label>
+                        <Checkbox 
                             toggle
                             value={this.state.max_time_check}
                             onChange={value => this.setState({ max_time_check: !this.state.max_time_check })}
                         />
-                        <label>
-                            Minutes to live:
-                        </label>
                         <InputRange
                             disabled={this.state.max_time_check}
                             maxValue={20}
@@ -150,6 +152,12 @@ class AddPassword extends React.Component {
                             value={this.state.max_time}
                             onChange={value => this.setState({ max_time: value })} />
                     </Form.Field>
+                    <Form.Field
+                        style={{ maxHeight: 200 }}
+                        control={TextArea}
+                        label='Public key'
+                        
+                        />
                     <Form.Button content="Submit" />
                 </Form >
                 {urlshover}

@@ -28,8 +28,10 @@ var Storage = (function () {
 
         const record = {
             'password': data['password'],
-            'max_time': new Date(date + (data['max_time'] * TIME_SHIFT_IN_SECONDS)),
+            'max_views_check': data['max_views_check'],
             'max_views': data['max_views'],
+            'max_time_check': data['max_time_check'],
+            'max_time': new Date(date + (data['max_time'] * TIME_SHIFT_IN_SECONDS))
         };
 
         return record;
