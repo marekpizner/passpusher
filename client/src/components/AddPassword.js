@@ -1,7 +1,7 @@
 import React from 'react';
 import InputRange from 'react-input-range';
 import "react-input-range/lib/css/index.css";
-import { Form, Button, Message } from 'semantic-ui-react'
+import { Form, Button, Message, Checkbox } from 'semantic-ui-react'
 import openpgp from 'openpgp';
 import axios from 'axios';
 
@@ -13,7 +13,9 @@ class AddPassword extends React.Component {
             password: '',
             file: '',
             url: '',
+            max_views_check: true,
             max_views: 4,
+            max_time_check: true,
             max_time: 1,
             error: ''
         };
@@ -114,21 +116,35 @@ class AddPassword extends React.Component {
                         value={this.state.password}
                         onChange={this.handleChange}
                     />
-                    <Form.Field>
+
+                    <Form.Field >
+                        <Checkbox 
+                            toggle
+                            value={this.state.max_views_check}
+                            onChange={value => this.setState({ max_views_check: !this.state.max_views_check })}
+                        />
                         <label>
                             Max views:
                         </label>
                         <InputRange
+                            disabled={this.state.max_views_check}
                             maxValue={10}
                             minValue={0}
                             value={this.state.max_views}
                             onChange={value => this.setState({ max_views: value })} />
                     </Form.Field>
+
                     <Form.Field>
+                    <Checkbox 
+                            toggle
+                            value={this.state.max_time_check}
+                            onChange={value => this.setState({ max_time_check: !this.state.max_time_check })}
+                        />
                         <label>
                             Minutes to live:
                         </label>
                         <InputRange
+                            disabled={this.state.max_time_check}
                             maxValue={20}
                             minValue={1}
                             value={this.state.max_time}
