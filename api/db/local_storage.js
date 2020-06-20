@@ -35,7 +35,7 @@ var Storage = (function () {
         };
 
         return record;
-    }
+    } 
 
     Storage.prototype.addPasswd = function (data) {
         this.cleanCache();

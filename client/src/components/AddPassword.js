@@ -73,10 +73,9 @@ class AddPassword extends React.Component {
         event.preventDefault();
     }
 
-    async encrypt(text, public_key){
+    async encrypt(text, targetKey){
         await openpgp.initWorker({ path: 'openpgp.worker.js' });
-
-        var publicKey = (await openpgp.key.readArmored(public_key.trim())).keys; 
+        var publicKey = (await openpgp.key.readArmored(targetKey.trim())).keys; 
 
         console.log(publicKey);
         
@@ -84,7 +83,7 @@ class AddPassword extends React.Component {
             message: openpgp.message.fromText(text),
             publicKeys: publicKey
         });
-    console.log(result.data);
+        console.log(result.data);
     }
 
     componentDidMount() {
