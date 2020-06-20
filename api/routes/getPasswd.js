@@ -18,7 +18,7 @@ router.get('/:url', function (req, res, next) {
     } else {
         var response = { data };
     }
-
+    console.log(response);
     res.send(JSON.stringify(response));
 });
 

@@ -4,16 +4,27 @@ var storage = new Storage()
 
 var router = express.Router();
 
+const checkData = (data) => {
+  if (
+    "password" in data.body &&
+    "max_views_check" in data.body &&
+    "max_views" in data.body &&
+    "max_time_check" in data.body &&
+    "max_time" in data.body &&
+
+    "password" !== '',
+    "password" !== undefined
+  ){
+    return true;
+  } else{
+    return false;
+  }
+}
+
+
 const parseData = (req) => {
   try {
-
-    if (
-      "password" in req.body &&
-      "max_views_check" in req.body &&
-      "max_views" in req.body &&
-      "max_time_check" in req.body &&
-      "max_time" in req.body
-    ) {
+    if (checkData(req)) {
       password = {
         "password": req.body['password'],
         'max_views_check': req.body['max_views_check'],
@@ -31,10 +42,9 @@ const parseData = (req) => {
   return false;
 }
 
-/* GET users listing. */
 router.post('/', function (req, res, next) {
   const data = parseData(req);
-
+  console.log(data)
   if (data) {
     var response = storage.addPasswd(data);
     console.log(response)
