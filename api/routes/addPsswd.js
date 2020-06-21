@@ -5,7 +5,9 @@ var storage = new Storage()
 var router = express.Router();
 
 const checkData = (data) => {
+  //TODO: better check for parameters
   if (
+    "encrypted" in data.body &&
     "password" in data.body &&
     "max_views_check" in data.body &&
     "max_views" in data.body &&
@@ -26,6 +28,7 @@ const parseData = (req) => {
   try {
     if (checkData(req)) {
       password = {
+        "encrypted": req.body['encrypted'],
         "password": req.body['password'],
         'max_views_check': req.body['max_views_check'],
         "max_views": req.body['max_views'],

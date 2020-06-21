@@ -1,16 +1,44 @@
 import React from 'react';
-import { Form, Button, Message } from 'semantic-ui-react'
+import { Form, Button, Message, TextArea } from 'semantic-ui-react'
+const openpgp = require('openpgp');
 
 class GetPassword extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { url: props.match.params.url, password: '', max_views: 0, error: '' };
+        this.state = { url: props.match.params.url, encrypted: '', password: '', max_views: 0, error: '', private_key: `` };
         console.log(this.state.url)
     }
 
     handleSubmit = () => {
         navigator.clipboard.writeText(this.state.password)
+    }
+    
+    getPasswordFromuser = (event) => {
+        return prompt('Please enter your password');
+    }
+
+     handleEncryptSumbit = async() => {
+       const password = await this.decrypt()
+       this.setState({encrypted: false, password: password})
+    }
+
+    async decrypt(){
+        try {
+            const passphrase = this.getPasswordFromuser();
+            const { keys: [privateKey] } = await openpgp.key.readArmored(this.state.private_key.trim());
+            console.log(privateKey)
+            await privateKey.decrypt(passphrase);
+
+            const result = await openpgp.decrypt({
+                message: await openpgp.message.readArmored(this.state.password),              // parse armored message
+                privateKeys: [privateKey]                                           // for decryption
+            });
+
+            return result.data;
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     componentDidMount() {
@@ -18,19 +46,40 @@ class GetPassword extends React.Component {
         fetch(url)
             .then(res => res.json())
             .then((data) => {
-                this.setState({ password: data.password, max_views: data.max_views, error: data.error });
+                console.log(data);
+                this.setState({ encrypted: data.encrypted, password: data.password, max_views: data.max_views, error: data.error });
             })
     }
 
     render() {
         var content;
-        if (this.state.password === '' | this.state.password === undefined | this.state.max_views === 0) {
+        if (this.state.error) {
             content = (
                 <Message negative>
                     <Message.Header>Error: {this.state.error}</Message.Header>
                 </Message>
             )
-        } else {
+        } else if (this.state.encrypted){
+            content = (
+                <Form onSubmit={this.handleEncryptSumbit}>
+                    <Form.Field>
+                        <label>Password is: {this.state.password}</label>
+                    </Form.Field>
+                    <Form.Field>
+                        <label>Number of views: {this.state.max_views}</label>
+                    </Form.Field>
+                    <Form.Field
+                        style={{ maxHeight: 200 }}
+                        control={TextArea}
+                        value = {this.state.private_key}
+                        onChange={value => this.setState({private_key: value.text })}
+                        label='Add private key to decrypt in browser'
+                        />
+                    <Form.Button content="Decrypt" />
+                </Form>
+            )
+        }
+        else {
             content = (
                 <Form onSubmit={this.handleSubmit}>
                     <Form.Field>

@@ -27,6 +27,7 @@ var Storage = (function () {
         const date = Date.now();
 
         const record = {
+            'encrypted': data['encrypted'],
             'password': data['password'],
             'max_views_check': data['max_views_check'],
             'max_views': data['max_views'],
@@ -58,6 +59,7 @@ var Storage = (function () {
     }
 
     Storage.prototype.getPasswd = function (url) {
+        //TODO refactor error message
         let one_pass = this.localStorage[url];
         let error_message = { 'error': 'Too many views or time expired' };
 

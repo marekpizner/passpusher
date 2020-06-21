@@ -21,40 +21,7 @@ class AddPassword extends React.Component {
             max_time_check: true,
             max_time: 1,
             error: '',
-            public_key: `-----BEGIN PGP PUBLIC KEY BLOCK-----
-Version: Keybase OpenPGP v1.0.0
-Comment: https://keybase.io/crypto
-
-xo0EXu4eagEEAMDtxM4/r9utk2idqNXt9CbSF4jGdAS2e09uKppdcYvfnP2AbBc3
-Oqz9z402YebE0xUm7VJ0jx2I1kCWPiXiHrffv3EC/hIw1s8u5OTHDrYrnc3iyHfn
-gS7x2rCHJavfQ0u9i+pb3Co0PJXlUUtneNWllP9h3cVgXzswX5MrAZK9ABEBAAHN
-FWFzZGFzZCA8YWRzQGRzYWQuYXNkPsKtBBMBCgAXBQJe7h5qAhsvAwsJBwMVCggC
-HgECF4AACgkQIgss2ezuKW0axgQAtmLLSpTdxQ9NU8PmxAOWLpK7JBV0wIbOoS5l
-GTkbldFRlL1UTKz9UHy+hq9l8lMxBncVfn+plN4EdMyGmw9QP7joahV9Nfdhp7cT
-w3xbYGxz8FR3uJvCSXy83DvywDxPv6JFTxiKVsLf/1LmnF2yM80fbYvpICt19MNo
-/X8iNAvOjQRe7h5qAQQAs6rmx5D0fCYxGiNKQ+c9rSM7CUm9Wcp1kW1B34qWp+d/
-CJ2+7jwEKijXmoKtpx6YwFHwy4Jk4bC7ocIzIBZPyaOu/Ydx8lwh9BeZ9ZqVbJbw
-3zZE7RM6IJsqw6Z7ohXcj/9fsLwG4sdJRIyIpCRPoA2FO0LcXVcg3CKp5e3B4YUA
-EQEAAcLAgwQYAQoADwUCXu4eagUJDwmcAAIbLgCoCRAiCyzZ7O4pbZ0gBBkBCgAG
-BQJe7h5qAAoJEERpiPFLpxlpPz4D/3e8tQeehD9r89iuWTwSmedwM7geNgyMZ14/
-1rE13M+lYf7qDa3lG8cAfBAcvURg1b5Bb30JZkiiphNZmS/Baa43FrdQSwI3Rmqe
-1NF2KjDkNqzGW1vRQxmjyIVtYNu5a+xlKDbs5nupC1dd4f8BVGVNoXArijIiz0IS
-CC0OkdiVpX4EAKH8Wf5I6eIrpYB0NnGPpFwnHsrjrM1LcSDbKhAc7uAHTyXGXLnv
-NcKh+URgqDHUNfdtNlLxg7Lw46/xH0Z8+0DfLS38RQtDHrNdkvb4X2CbGg3Oaj0Z
-eRTKVJ0prNc0y7+Wkr7gW5Iv9H32E9Uj5DfBaFiZz2YZYGSDYGtSsQxuzo0EXu4e
-agEEAOnTuLcFLKfysZaNcODBASXGKi/8AHKnG46sJJIYmh6Oj0pVVUxMdHYNFRav
-lsxOsMR6LbenWA0DlMEQIWtWi/E2NxJy1DhjuIKSfXFtU7oNMTnq7KDZXnDLTAW3
-N7Njc2i5GRh3BlMTdtO96SjaznCOlBQS5Gv5HuLqZ0cuoKBDABEBAAHCwIMEGAEK
-AA8FAl7uHmoFCQ8JnAACGy4AqAkQIgss2ezuKW2dIAQZAQoABgUCXu4eagAKCRB1
-/NM8Vs1knmdcBADeLNyDxdyiQ2Ui8G0tOtxHktjc5xTVWEItNMSggGIh/b/KQXrM
-N917NZ8cD1zD4M7YhVy2C1MGvNnDDLV+d1JFgi2YlWD61osqn04Mw8YA6Twca9e/
-UEHdCHoePf6NHVxVX+d84G28AMgZX7PBEGQcQttf/f//clLCOdhIidj6wfqxA/4i
-HcW3e7Y+as2SohLLGrVuRGVwFAF2Iht10ri/JCsvLVZdLQWmfVXSDItP3OrqZmGz
-u7DczHs0iCg9bODfyeVZ7Mx0VALObXJPoqnVTUCqg0AQfCcdkQd60GoN2wKvGagc
-Q8GvVVANEHKJBjLhRdANbNGYOPybvhoDSr5Lp87/kg==
-=ZFzY
------END PGP PUBLIC KEY BLOCK-----
-            `
+            public_key: ``
         };
     }
 
@@ -72,22 +39,17 @@ Q8GvVVANEHKJBjLhRdANbNGYOPybvhoDSr5Lp87/kg==
     }
 
     handleSubmit = async (event) => {
-        const encrypted_password = await this.encrypt(this.state.password);
-
-        let fileReader = new FileReader();
-
-        if (this.state.file !== '') {
-            let rsa_key_pub = '';
-
-            fileReader.onload = (e) => {
-                rsa_key_pub = e.target.result;
-                console.log('Content of file1:' + rsa_key_pub);
-            }
-            fileReader.readAsText(this.state.file[0]);
+        var password = this.state.password;
+        var encrypted = false;
+        if (this.state.public_key !==''){
+            encrypted=true;
+            password = await this.encrypt(this.state.password);
         }
-        if (encrypted_password !== '' || encrypted_password !== undefined){
+        
+        if (password !== '' || password !== undefined){
             const passwordToSend = {
-                "password": encrypted_password,
+                "encrypted": encrypted,
+                "password": password,
                 "max_views_check": this.state.max_views_check,
                 "max_views": this.state.max_views,
                 "max_time_check": this.state.max_time_check,
@@ -106,20 +68,19 @@ Q8GvVVANEHKJBjLhRdANbNGYOPybvhoDSr5Lp87/kg==
                 }
             });
         }
-
         event.preventDefault();
     }
 
     async encrypt(text){
         try {
-            var publicKey = (await openpgp.key.readArmored(this.state.public_key.trim())).keys[0];             
+            const publicKey = (await openpgp.key.readArmored(this.state.public_key.trim())).keys[0];             
             const result = await openpgp.encrypt({
                 message: openpgp.message.fromText(text),
                 publicKeys: publicKey
             })
             return result.data;
-        } catch {
-
+        } catch (error) {
+            console.error(error);
         }
     }
 
@@ -156,14 +117,12 @@ Q8GvVVANEHKJBjLhRdANbNGYOPybvhoDSr5Lp87/kg==
                     />
 
                     <Form.Field >
-
                         <label>
                             Max views:
                         </label>
                         <Checkbox 
                             toggle
-                            value={this.state.max_views_check}
-                            onChange={value => this.setState({ max_views_check: !this.state.max_views_check })}
+                            onChange={() => this.setState({ max_views_check: !this.state.max_views_check })}
                         />
                         <InputRange
                             disabled={this.state.max_views_check}
@@ -180,8 +139,7 @@ Q8GvVVANEHKJBjLhRdANbNGYOPybvhoDSr5Lp87/kg==
                         </label>
                         <Checkbox 
                             toggle
-                            value={this.state.max_time_check}
-                            onChange={value => this.setState({ max_time_check: !this.state.max_time_check })}
+                            onChange={() => this.setState({ max_time_check: !this.state.max_time_check })}
                         />
                         <InputRange
                             disabled={this.state.max_time_check}

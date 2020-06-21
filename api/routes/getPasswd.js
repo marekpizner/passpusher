@@ -11,14 +11,16 @@ router.get('/:url', function (req, res, next) {
 
     if (data !== undefined) {
         var response = {
+            'encrypted': data.encrypted,
             'password': data.password,
             'max_views': data.max_views,
             'error': data.error
         }
     } else {
-        var response = { data };
+        var err = new Error('Not found');
+        err.status = 404;
+        return next(err);
     }
-    console.log(response);
     res.send(JSON.stringify(response));
 });
 
