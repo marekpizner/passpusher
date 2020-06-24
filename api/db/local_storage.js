@@ -17,9 +17,9 @@ var Storage = (function () {
             key = crypto.randomBytes(64).toString('hex');
             this.localStorage[key] = password_record;
             this.max_passwords += 1;
-            return { 'url': key, 'error': '' };
+            return { 'url': key, 'errors': [] };
         } else {
-            return { 'url': '', 'error': 'Max capacity' };
+            return { 'url': '', 'errors': ['Max capacity'] };
         }
     }
 
@@ -36,7 +36,7 @@ var Storage = (function () {
         };
 
         return record;
-    } 
+    }
 
     Storage.prototype.addPasswd = function (data) {
         this.cleanCache();
@@ -58,22 +58,32 @@ var Storage = (function () {
         }
     }
 
+    Storage.prototype.checkConditionOnPassword = function (one_pass) {
+        if (one_pass.max_views_check === true && one_pass.max_views < 1) {
+            return false;
+        }
+        if (one_pass.max_time_check === true && one_pass.max_time < Date.now()) {
+            return false;
+        }
+        return true;
+    }
+
     Storage.prototype.getPasswd = function (url) {
         //TODO refactor error message
         let one_pass = this.localStorage[url];
-        let error_message = { 'error': 'Too many views or time expired' };
+        let error_messages = { 'errors': ['Too many views or time expired'] };
 
         try {
-            one_pass.max_views -= 1;
-            if (one_pass.max_views > 0 & one_pass.max_time > Date.now()) {
+            if (this.checkConditionOnPassword(one_pass)) {
+                one_pass.max_views -= 1;
                 return one_pass;
             } else {
                 delete this.localStorage[url];
                 this.max_passwords -= 1;
-                return error_message;
+                return error_messages;
             }
         } catch (error) {
-            return error_message;
+            return error_messages;
         }
     };
 

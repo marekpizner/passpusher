@@ -13,41 +13,50 @@ class AddPassword extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            encrypted: false,
             password: '',
-            file: '',
             url: '',
-            max_views_check: true,
+            max_views_check: false,
             max_views: 4,
-            max_time_check: true,
+            max_time_check: false,
             max_time: 1,
-            error: '',
+            errors: [],
             public_key: ``
         };
     }
 
-    handleChange = (event) => {
+    handleChangePassword = (event) => {
         this.setState({ password: event.target.value });
     }
 
-    handleChangeFile = (event) => {
-        this.setState({ file: event.target.files });
+    handleChangePublicKey = (event) => {
+        this.setState({ public_key: event.target.value });
     }
 
     handleCopyToClipboard = (event) => {
         navigator.clipboard.writeText(this.state.url)
     }
 
+    readyToSend() {
+        if (this.state.password === '' ||
+            this.state.password === undefined) {
+            return false;
+        }
+
+        return true;
+    }
+
     handleSubmit = async (event) => {
         var password = this.state.password;
-        var encrypted = false;
-        if (this.state.public_key !==''){
-            encrypted=true;
+
+        if (this.state.public_key !== '') {
+            this.setState({ encrypted: true })
             password = await this.encrypt(this.state.password);
         }
-        
-        if (password !== '' || password !== undefined){
+
+        if (this.readyToSend()) {
             const passwordToSend = {
-                "encrypted": encrypted,
+                "encrypted": this.state.encrypted,
                 "password": password,
                 "max_views_check": this.state.max_views_check,
                 "max_views": this.state.max_views,
@@ -57,26 +66,29 @@ class AddPassword extends React.Component {
 
             axios.post('http://localhost:3001/addpassword/', passwordToSend).then(res => {
                 const response_data = res.data
-                if (response_data.error !== '') {
-                    this.setState({ error: response_data.error, url: '' });
-                } else {
+                if (response_data.errors.length === undefined || response_data.errors.length === 0) {
                     const url = 'http://localhost:3000/getpassword/' + response_data.url;
                     this.setState({ url: url });
+                } else {
+                    this.setState({ errors: response_data.errors, url: '' });
                 }
             });
+        } else {
+            this.setState({ errors: [...this.state.errors, 'Sending password to server!'] })
         }
         event.preventDefault();
     }
 
-    async encrypt(text){
+    async encrypt(text) {
         try {
-            const publicKey = (await openpgp.key.readArmored(this.state.public_key.trim())).keys[0];             
+            const publicKey = (await openpgp.key.readArmored(this.state.public_key.trim())).keys[0];
             const result = await openpgp.encrypt({
                 message: openpgp.message.fromText(text),
                 publicKeys: publicKey
             })
             return result.data;
         } catch (error) {
+            this.setState({ errors: [...this.state.errors, 'Encrypting data is public key correct?'] })
             console.error(error);
         }
     }
@@ -94,10 +106,10 @@ class AddPassword extends React.Component {
                 </Form>
             )
         } else {
-            if (this.state.error !== '') {
+            if (this.state.errors.length !== 0) {
                 urlshover = (
                     <Message negative>
-                        <Message.Header>Error: {this.state.error}</Message.Header>
+                        <Message.Header>Error: {this.state.errors.join(',  ')}</Message.Header>
                     </Message>
                 )
             }
@@ -110,19 +122,19 @@ class AddPassword extends React.Component {
                     <Form.Input
                         label="Password"
                         value={this.state.password}
-                        onChange={this.handleChange}
+                        onChange={this.handleChangePassword}
                     />
 
                     <Form.Field >
                         <label>
                             Max views:
                         </label>
-                        <Checkbox 
+                        <Checkbox
                             toggle
                             onChange={() => this.setState({ max_views_check: !this.state.max_views_check })}
                         />
                         <InputRange
-                            disabled={this.state.max_views_check}
+                            disabled={!this.state.max_views_check}
                             maxValue={10}
                             minValue={0}
                             value={this.state.max_views}
@@ -134,24 +146,33 @@ class AddPassword extends React.Component {
                         <label>
                             Minutes to live:
                         </label>
-                        <Checkbox 
+                        <Checkbox
                             toggle
                             onChange={() => this.setState({ max_time_check: !this.state.max_time_check })}
                         />
                         <InputRange
-                            disabled={this.state.max_time_check}
+                            disabled={!this.state.max_time_check}
                             maxValue={20}
                             minValue={1}
                             value={this.state.max_time}
                             onChange={value => this.setState({ max_time: value })} />
                     </Form.Field>
-                    <Form.Field
-                        style={{ maxHeight: 200 }}
-                        control={TextArea}
-                        value = {this.state.public_key}
-                        onChange={value => this.setState({public_key: value.text })}
-                        label='Public key'
+                    <Form.Field>
+                        <label>
+                            Public key:
+                    </label>
+                        <Checkbox
+                            toggle
+                            onChange={() => this.setState({ encrypted: !this.state.encrypted })}
                         />
+
+                        <TextArea
+                            disabled={!this.state.encrypted}
+                            value={this.state.public_key}
+                            style={{ maxHeight: 200 }}
+                            onChange={this.handleChangePublicKey}
+                        />
+                    </Form.Field>
                     <Form.Button content="Submit" />
                 </Form >
                 {urlshover}
