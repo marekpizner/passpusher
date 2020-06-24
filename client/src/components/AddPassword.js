@@ -42,7 +42,6 @@ class AddPassword extends React.Component {
             this.state.password === undefined) {
             return false;
         }
-
         return true;
     }
 
