@@ -34,7 +34,6 @@ class AddPassword extends React.Component {
     }
 
     handleCopyToClipboard = (event) => {
-        console.log('CLIboard')
         navigator.clipboard.writeText(this.state.url)
     }
 
@@ -58,13 +57,11 @@ class AddPassword extends React.Component {
 
             axios.post('http://localhost:3001/addpassword/', passwordToSend).then(res => {
                 const response_data = res.data
-                console.log(res)
                 if (response_data.error !== '') {
                     this.setState({ error: response_data.error, url: '' });
                 } else {
                     const url = 'http://localhost:3000/getpassword/' + response_data.url;
                     this.setState({ url: url });
-                    console.log('Return: ' + url);
                 }
             });
         }

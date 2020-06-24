@@ -7,7 +7,6 @@ class GetPassword extends React.Component {
     constructor(props) {
         super(props);
         this.state = { url: props.match.params.url, encrypted: '', password: '', max_views: 0, error: '', private_key: `` };
-        console.log(this.state.url)
     }
 
     handleSubmit = () => {
@@ -27,7 +26,6 @@ class GetPassword extends React.Component {
         try {
             const passphrase = this.getPasswordFromuser();
             const { keys: [privateKey] } = await openpgp.key.readArmored(this.state.private_key.trim());
-            console.log(privateKey)
             await privateKey.decrypt(passphrase);
 
             const result = await openpgp.decrypt({
@@ -46,7 +44,6 @@ class GetPassword extends React.Component {
         fetch(url)
             .then(res => res.json())
             .then((data) => {
-                console.log(data);
                 this.setState({ encrypted: data.encrypted, password: data.password, max_views: data.max_views, error: data.error });
             })
     }
