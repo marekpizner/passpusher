@@ -59,7 +59,7 @@ var Storage = (function () {
     }
 
     Storage.prototype.checkConditionOnPassword = function (one_pass) {
-        if (one_pass.max_views_check === true && one_pass.max_views < 1) {
+        if (one_pass.max_views_check === true && one_pass.max_views < 0) {
             return false;
         }
         if (one_pass.max_time_check === true && one_pass.max_time < Date.now()) {
@@ -74,8 +74,10 @@ var Storage = (function () {
         let error_messages = { 'errors': ['Too many views or time expired'] };
 
         try {
-            if (this.checkConditionOnPassword(one_pass)) {
+            if (one_pass.max_views_check) {
                 one_pass.max_views -= 1;
+            }
+            if (this.checkConditionOnPassword(one_pass)) {
                 return one_pass;
             } else {
                 delete this.localStorage[url];

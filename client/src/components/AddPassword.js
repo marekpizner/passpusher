@@ -48,6 +48,7 @@ class AddPassword extends React.Component {
 
     handleSubmit = async (event) => {
         var password = this.state.password;
+        this.setState({ encrypted: false })
 
         if (this.state.public_key !== '') {
             this.setState({ encrypted: true })

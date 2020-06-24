@@ -16,7 +16,6 @@ router.get('/:url', function (req, res, next) {
         err.status = 404;
         return next(err);
     }
-
 });
 
 module.exports = router;
