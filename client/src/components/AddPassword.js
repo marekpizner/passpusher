@@ -158,7 +158,7 @@ class AddPassword extends React.Component {
                     <Form.Field>
                         <label>
                             Encrypt with public key:
-                    </label>
+                        </label>
                         <Checkbox
                             toggle
                             onChange={() => this.setState({ encrypted: !this.state.encrypted })}
