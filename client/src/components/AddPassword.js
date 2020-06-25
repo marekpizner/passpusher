@@ -6,8 +6,6 @@ import axios from 'axios';
 
 const openpgp = require('openpgp');
 
-// import * as openpgp from 'openpgp'
-
 class AddPassword extends React.Component {
 
     constructor(props) {
@@ -159,7 +157,7 @@ class AddPassword extends React.Component {
                     </Form.Field>
                     <Form.Field>
                         <label>
-                            Public key:
+                            Encrypt with public key:
                     </label>
                         <Checkbox
                             toggle

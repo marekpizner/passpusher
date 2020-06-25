@@ -42,13 +42,14 @@ class GetPassword extends React.Component {
             await privateKey.decrypt(passphrase);
 
             const result = await openpgp.decrypt({
-                message: await openpgp.message.readArmored(this.state.password),              // parse armored message
-                privateKeys: [privateKey]                                           // for decryption
+                message: await openpgp.message.readArmored(this.state.password),
+                privateKeys: [privateKey]
             });
 
             return result.data;
         } catch (error) {
             console.error(error);
+            // this.setState({ errors: [...this.state.errors, 'Wrong password or private key!'] })
         }
     }
 

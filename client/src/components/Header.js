@@ -7,7 +7,7 @@ import { Menu } from 'semantic-ui-react'
 const Header = () => {
 
     return (
-        <Menu secondary>
+        <Menu pointing>
             <Menu.Item as={Link} to="/home"> Home </Menu.Item>
             <Menu.Item as={Link} to="/createkeys">Create keys </Menu.Item>
             <Menu.Item as={Link} to="/encrypdecrypt"> Encrypt decrypt</Menu.Item>
