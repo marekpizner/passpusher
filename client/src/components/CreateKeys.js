@@ -15,7 +15,8 @@ class CreateKeys extends React.Component {
             secret_1: '',
             secret_2: '',
             private_key: '',
-            public_key: ''
+            public_key: '',
+            errors: []
         };
     }
 
@@ -33,11 +34,15 @@ class CreateKeys extends React.Component {
     }
 
     valuesCheck = () => {
-
+        if (!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.state.email))) {
+            this.setState({ errors: [...this.state.errors, 'Wrong email!'] });
+            return false;
+        }
+        return true;
     }
 
     onSubmit = async () => {
-        if (this.valuesCheck) {
+        if (this.valuesCheck()) {
             const keys = await this.generateNewPair(this.state.name, this.state.email, this.state.secret_1);
             console.log(keys);
             this.setState({ private_key: keys.privateKeyArmored, public_key: keys.publicKeyArmored });
@@ -56,6 +61,13 @@ class CreateKeys extends React.Component {
 
     render() {
 
+        var errors = ''
+        if (this.state.errors.length !== 0) {
+            errors = (
+                <Message negative>
+                    <Message.Header>Error: {this.state.errors}</Message.Header>
+                </Message>)
+        }
 
         return (
             <Grid columns={2} relaxed='very' stackable>
@@ -84,6 +96,7 @@ class CreateKeys extends React.Component {
                             label="Secret phrase"
                             onChange={this.onChangeSecret_2}
                         />
+                        {errors}
                         <Button>Generate</Button>
                     </Form>
                 </Grid.Column>
