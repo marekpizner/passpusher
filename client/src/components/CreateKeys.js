@@ -34,11 +34,20 @@ class CreateKeys extends React.Component {
     }
 
     valuesCheck = () => {
+        var errors = [];
         if (!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.state.email))) {
-            this.setState({ errors: [...this.state.errors, 'Wrong email!'] });
+            errors.push('Wrong email!')
+        }
+        if (this.state.secret_1 !== this.state.secret_2) {
+            errors.push('Secrets do not match!');
+        }
+
+        if (errors.length === 0) {
+            return true;
+        } else {
+            this.setState({ errors: errors })
             return false;
         }
-        return true;
     }
 
     onSubmit = async () => {
