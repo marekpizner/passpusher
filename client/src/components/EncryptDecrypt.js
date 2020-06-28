@@ -1,6 +1,6 @@
 import React from 'react';
 import "react-input-range/lib/css/index.css";
-import { Form, Button, Message, TextArea } from 'semantic-ui-react'
+import { Form, Button, Label, TextArea } from 'semantic-ui-react'
 
 const openpgp = require('openpgp');
 
@@ -11,9 +11,11 @@ class EncryptDecrypt extends React.Component {
         this.state = {
             message_private: '',
             private_key: '',
+            decrypted_message: false,
 
             message_public: '',
-            public_key: ''
+            public_key: '',
+            encrypted_message: false
         }
     }
 
@@ -29,24 +31,72 @@ class EncryptDecrypt extends React.Component {
         });
     }
 
+    onClickDecrypt = async () => {
+        this.setState({ decrypted_message: await this.decrypt(this.state.message_private) })
+    }
+
+    onClickEncrypt = async () => {
+        this.setState({ encrypted_message: await this.encrypt(this.state.message_public) })
+    }
+
     async decrypt() {
         try {
             const passphrase = this.getPasswordFromuser();
             const { keys: [privateKey] } = await openpgp.key.readArmored(this.state.private_key.trim());
             await privateKey.decrypt(passphrase);
 
+            console.log(this.state.message_private)
+            console.log(privateKey)
+
             const result = await openpgp.decrypt({
-                message: await openpgp.message.readArmored(this.state.password),
+                message: await openpgp.message.readArmored(this.state.message_private),
                 privateKeys: [privateKey]
             });
             return result.data;
         } catch (error) {
             console.error(error);
-            // this.setState({ errors: [...this.state.errors, 'Wrong password or private key!'] })
+        }
+    }
+
+    async encrypt() {
+        try {
+            const publicKey = (await openpgp.key.readArmored(this.state.public_key.trim())).keys[0];
+            const result = await openpgp.encrypt({
+                message: openpgp.message.fromText(this.state.message_public),
+                publicKeys: publicKey
+            })
+            return result.data;
+        } catch (error) {
+            console.error(error);
         }
     }
 
     render() {
+        console.log(this.state)
+        var shower_decrypted_message = '';
+        var shower_encrypted_message = '';
+
+        if (this.state.decrypted_message) {
+            shower_decrypted_message = (
+                <Form.Field>
+                    <label>Message is:</label>
+                    <Label> {this.state.decrypted_message} </Label>
+                </Form.Field>
+            )
+        }
+        if (this.state.encrypted_message) {
+            shower_encrypted_message = (
+                <Form.Field>
+                    <label>Encrypted message:</label>
+                    <TextArea
+                        disable
+                        value={this.state.encrypted_message}
+                    />
+                </Form.Field>
+
+            )
+        }
+
         return (
             <div>
                 <h2>Encrypt decrypt</h2>
@@ -67,7 +117,8 @@ class EncryptDecrypt extends React.Component {
                             onChange={this.handleChange}
                         />
                     </Form.Field>
-                    <Button>Decrypt</Button>
+                    <Button onClick={this.onClickDecrypt}>Decrypt</Button>
+                    {shower_decrypted_message}
 
                     <Form.Field>
                         <label>Mesage:</label>
@@ -85,7 +136,8 @@ class EncryptDecrypt extends React.Component {
                             onChange={this.handleChange}
                         />
                     </Form.Field>
-                    <Button>Encrypt</Button>
+                    <Button onClick={this.onClickEncrypt}>Encrypt</Button>
+                    {shower_encrypted_message}
                 </Form>
             </div>
         )

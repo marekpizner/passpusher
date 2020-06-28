@@ -40,7 +40,6 @@ class GetPassword extends React.Component {
             const passphrase = this.getPasswordFromuser();
             const { keys: [privateKey] } = await openpgp.key.readArmored(this.state.private_key.trim());
             await privateKey.decrypt(passphrase);
-
             const result = await openpgp.decrypt({
                 message: await openpgp.message.readArmored(this.state.password),
                 privateKeys: [privateKey]
@@ -49,7 +48,6 @@ class GetPassword extends React.Component {
             return result.data;
         } catch (error) {
             console.error(error);
-            // this.setState({ errors: [...this.state.errors, 'Wrong password or private key!'] })
         }
     }
 
