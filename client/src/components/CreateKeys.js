@@ -1,7 +1,6 @@
 import React from 'react';
 import "react-input-range/lib/css/index.css";
-import InputRange from 'react-input-range';
-import { Form, Button, Message, Checkbox, TextArea, Grid } from 'semantic-ui-react'
+import { Form, Button, Message, TextArea, Grid } from 'semantic-ui-react'
 
 const openpgp = require('openpgp');
 
@@ -38,6 +37,9 @@ class CreateKeys extends React.Component {
         if (!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.state.email))) {
             errors.push('Wrong email!')
         }
+        if (this.state.secret_1 === '') {
+            errors.push('Secret is empty!');
+        }
         if (this.state.secret_1 !== this.state.secret_2) {
             errors.push('Secrets do not match!');
         }
@@ -60,9 +62,9 @@ class CreateKeys extends React.Component {
 
     async generateNewPair(name, email, secret) {
         const key = await openpgp.generateKey({
-            userIds: [{ name: name, email: email }], // you can pass multiple user IDs
-            rsaBits: 4096,                                              // RSA key size
-            passphrase: secret           // protects the private key
+            userIds: [{ name: name, email: email }],
+            rsaBits: 4096,
+            passphrase: secret
         });
         return key;
     }
@@ -84,23 +86,27 @@ class CreateKeys extends React.Component {
                     <Form onSubmit={this.onSubmit}>
                         <h2>Generate keys</h2>
                         <Form.Input
+                            required
                             value={this.state.name}
                             label="Name"
                             onChange={this.onChangeName}
                         />
                         <Form.Input
+                            required
                             value={this.state.email}
                             label="Email"
                             onChange={this.onChangeEmail}
                         />
 
                         <Form.Input
+                            required
                             value={this.state.secret_1}
                             label="Secret phrase"
                             onChange={this.onChangeSecret_1}
                         />
 
                         <Form.Input
+                            required
                             value={this.state.secret_2}
                             label="Secret phrase"
                             onChange={this.onChangeSecret_2}

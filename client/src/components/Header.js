@@ -4,16 +4,44 @@ import { Link } from "react-router-dom";
 import { Menu } from 'semantic-ui-react'
 
 
-const Header = () => {
+export default class Header extends React.Component {
 
-    return (
-        <Menu pointing>
-            <Menu.Item as={Link} to="/home"> Home </Menu.Item>
-            <Menu.Item as={Link} to="/createkeys">Create keys </Menu.Item>
-            <Menu.Item as={Link} to="/encrypdecrypt"> Encrypt decrypt</Menu.Item>
-            <Menu.Item as={Link} to="/addpassword">Push password</Menu.Item>
-        </Menu>
-    )
-};
+    state = { activeItem: 'home' }
 
-export default Header;
+    handleItemClick = (e, { name }) => this.setState({ activeItem: name })
+
+    render() {
+        const { activeItem } = this.state
+        return (
+            <Menu secondary>
+                <Menu.Item
+                    name='home'
+                    as={Link}
+                    to="/home"
+                    active={activeItem === 'home'}
+                    onClick={this.handleItemClick} />
+
+                <Menu.Item
+                    name='create_keys'
+                    as={Link}
+                    to="/createkeys"
+                    active={activeItem === 'create_keys'}
+                    onClick={this.handleItemClick} />
+
+                <Menu.Item
+                    name='encrypt_decrypt'
+                    as={Link}
+                    to="/encrypdecrypt"
+                    active={activeItem === 'encrypt_decrypt'}
+                    onClick={this.handleItemClick} />
+
+                <Menu.Item
+                    name='add_password'
+                    as={Link}
+                    to="/addpassword"
+                    active={activeItem === 'add_password'}
+                    onClick={this.handleItemClick} />
+            </Menu >
+        )
+    }
+}
