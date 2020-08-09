@@ -1,8 +1,7 @@
 import React from 'react';
 import "react-input-range/lib/css/index.css";
 import { Form, Button, Message, TextArea, Grid } from 'semantic-ui-react'
-
-const openpgp = require('openpgp');
+import generateNewPair from '../cryptoTool/Crypto'
 
 class CreateKeys extends React.Component {
 
@@ -17,19 +16,6 @@ class CreateKeys extends React.Component {
             public_key: '',
             errors: []
         };
-    }
-
-    onChangeName = (event) => {
-        this.setState({ name: event.target.value })
-    }
-    onChangeEmail = (event) => {
-        this.setState({ email: event.target.value })
-    }
-    onChangeSecret_1 = (event) => {
-        this.setState({ secret_1: event.target.value })
-    }
-    onChangeSecret_2 = (event) => {
-        this.setState({ secret_2: event.target.value })
     }
 
     valuesCheck = () => {
@@ -54,21 +40,11 @@ class CreateKeys extends React.Component {
 
     onSubmit = async () => {
         if (this.valuesCheck()) {
-            const keys = await this.generateNewPair(this.state.name, this.state.email, this.state.secret_1);
+            const keys = await generateNewPair(this.state.name, this.state.email, this.state.secret_1);
             console.log(keys);
             this.setState({ private_key: keys.privateKeyArmored, public_key: keys.publicKeyArmored });
         }
     }
-
-    async generateNewPair(name, email, secret) {
-        const key = await openpgp.generateKey({
-            userIds: [{ name: name, email: email }],
-            rsaBits: 4096,
-            passphrase: secret
-        });
-        return key;
-    }
-
 
     render() {
 
@@ -89,27 +65,27 @@ class CreateKeys extends React.Component {
                             required
                             value={this.state.name}
                             label="Name"
-                            onChange={this.onChangeName}
+                            onChange={event => this.setState({ name: event.target.value })}
                         />
                         <Form.Input
                             required
                             value={this.state.email}
                             label="Email"
-                            onChange={this.onChangeEmail}
+                            onChange={event => this.setState({ email: event.target.value })}
                         />
 
                         <Form.Input
                             required
                             value={this.state.secret_1}
                             label="Secret phrase"
-                            onChange={this.onChangeSecret_1}
+                            onChange={event => this.setState({ secret_1: event.target.value })}
                         />
 
                         <Form.Input
                             required
                             value={this.state.secret_2}
                             label="Secret phrase"
-                            onChange={this.onChangeSecret_2}
+                            onChange={event => this.setState({ secret_2: event.target.value })}
                         />
                         {errors}
                         <Button>Generate</Button>

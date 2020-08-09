@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form, Button, Message, TextArea } from 'semantic-ui-react'
-const openpgp = require('openpgp');
+import decrypt from '../cryptoTool/Crypto'
 
 class GetPassword extends React.Component {
 
@@ -22,34 +22,16 @@ class GetPassword extends React.Component {
         navigator.clipboard.writeText(this.state.password)
     }
 
-    hancleChangePrivatekey = (event) => {
-        this.setState({ private_key: event.target.value });
-    }
-
     getPasswordFromuser = (event) => {
         return prompt('Please enter your password');
     }
 
     handleEncryptSumbit = async () => {
-        const password = await this.decrypt()
+        const passphrase = this.getPasswordFromuser();
+        const password = await decrypt(this.state.password, this.state.private_key, passphrase)
         this.setState({ encrypted: false, password: password })
     }
 
-    async decrypt() {
-        try {
-            const passphrase = this.getPasswordFromuser();
-            const { keys: [privateKey] } = await openpgp.key.readArmored(this.state.private_key.trim());
-            await privateKey.decrypt(passphrase);
-            const result = await openpgp.decrypt({
-                message: await openpgp.message.readArmored(this.state.password),
-                privateKeys: [privateKey]
-            });
-
-            return result.data;
-        } catch (error) {
-            console.error(error);
-        }
-    }
 
     componentDidMount() {
         const url = 'http://localhost:3001/getpassword/' + this.state.url;
@@ -80,7 +62,6 @@ class GetPassword extends React.Component {
     }
 
     render() {
-        console.log(this.state)
         var content;
 
         var number_of_views_content = this.getNumberOfViews();
@@ -99,7 +80,7 @@ class GetPassword extends React.Component {
                             style={{ maxHeight: 200 }}
                             control={TextArea}
                             value={this.state.private_key}
-                            onChange={this.hancleChangePrivatekey}
+                            onChange={event => this.setState({ private_key: event.target.value })}
                             label='Add private key to decrypt in browser'
                         />
                         <Form.Button content="Decrypt" />

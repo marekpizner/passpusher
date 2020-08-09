@@ -3,8 +3,7 @@ import InputRange from 'react-input-range';
 import "react-input-range/lib/css/index.css";
 import { Form, Button, Message, Checkbox, TextArea } from 'semantic-ui-react'
 import axios from 'axios';
-
-const openpgp = require('openpgp');
+import encrypt from '../cryptoTool/Crypto'
 
 class AddPassword extends React.Component {
 
@@ -23,13 +22,6 @@ class AddPassword extends React.Component {
         };
     }
 
-    handleChangePassword = (event) => {
-        this.setState({ password: event.target.value });
-    }
-
-    handleChangePublicKey = (event) => {
-        this.setState({ public_key: event.target.value });
-    }
 
     handleCopyToClipboard = (event) => {
         navigator.clipboard.writeText(this.state.url)
@@ -49,7 +41,7 @@ class AddPassword extends React.Component {
 
         if (this.state.public_key !== '') {
             this.setState({ encrypted: true })
-            password = await this.encrypt(this.state.password);
+            password = await encrypt(this.state.password, this.state.public_key);
         }
 
         if (this.readyToSend()) {
@@ -75,20 +67,6 @@ class AddPassword extends React.Component {
             this.setState({ errors: [...this.state.errors, 'Sending password to server!'] })
         }
         event.preventDefault();
-    }
-
-    async encrypt(text) {
-        try {
-            const publicKey = (await openpgp.key.readArmored(this.state.public_key.trim())).keys[0];
-            const result = await openpgp.encrypt({
-                message: openpgp.message.fromText(text),
-                publicKeys: publicKey
-            })
-            return result.data;
-        } catch (error) {
-            this.setState({ errors: [...this.state.errors, 'Encrypting data is public key correct?'] })
-            console.error(error);
-        }
     }
 
     render() {
@@ -120,7 +98,7 @@ class AddPassword extends React.Component {
                     <Form.Input
                         label="Password"
                         value={this.state.password}
-                        onChange={this.handleChangePassword}
+                        onChange={event => this.setState({ password: event.target.value })}
                     />
 
                     <Form.Field >
@@ -168,7 +146,7 @@ class AddPassword extends React.Component {
                             disabled={!this.state.encrypted}
                             value={this.state.public_key}
                             style={{ maxHeight: 200 }}
-                            onChange={this.handleChangePublicKey}
+                            onChange={event => this.setState({ public_key: event.target.value })}
                         />
                     </Form.Field>
                     <Form.Button content="Submit" />

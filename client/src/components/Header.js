@@ -36,10 +36,10 @@ export default class Header extends React.Component {
                     onClick={this.handleItemClick} />
 
                 <Menu.Item
-                    name='add_password'
+                    name='push_password'
                     as={Link}
                     to="/addpassword"
-                    active={activeItem === 'add_password'}
+                    active={activeItem === 'push_password'}
                     onClick={this.handleItemClick} />
             </Menu >
         )
