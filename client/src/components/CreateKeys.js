@@ -42,7 +42,6 @@ class CreateKeys extends React.Component {
         event.preventDefault();
         if (this.valuesCheck()) {
             const keys = await Crypto.generateNewPair(this.state.name, this.state.email, this.state.secret_1);
-            console.log(keys);
             this.setState({ private_key: keys.privateKeyArmored, public_key: keys.publicKeyArmored });
         }
     }
