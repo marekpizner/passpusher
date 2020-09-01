@@ -1,8 +1,8 @@
 import React from 'react';
 import "react-input-range/lib/css/index.css";
 import { Form, Button, Label, TextArea } from 'semantic-ui-react'
+import Crypto from '../cryptoTool/Crypto'
 
-const openpgp = require('openpgp');
 
 class EncryptDecrypt extends React.Component {
 
@@ -32,43 +32,12 @@ class EncryptDecrypt extends React.Component {
     }
 
     onClickDecrypt = async () => {
-        this.setState({ decrypted_message: await this.decrypt(this.state.message_private) })
+        const passphrase = this.getPasswordFromuser();
+        this.setState({ decrypted_message: await Crypto.decrypt(this.state.message_private, this.state.private_key, passphrase) })
     }
 
     onClickEncrypt = async () => {
-        this.setState({ encrypted_message: await this.encrypt(this.state.message_public) })
-    }
-
-    async decrypt() {
-        try {
-            const passphrase = this.getPasswordFromuser();
-            const { keys: [privateKey] } = await openpgp.key.readArmored(this.state.private_key.trim());
-            await privateKey.decrypt(passphrase);
-
-            console.log(this.state.message_private)
-            console.log(privateKey)
-
-            const result = await openpgp.decrypt({
-                message: await openpgp.message.readArmored(this.state.message_private),
-                privateKeys: [privateKey]
-            });
-            return result.data;
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    async encrypt() {
-        try {
-            const publicKey = (await openpgp.key.readArmored(this.state.public_key.trim())).keys[0];
-            const result = await openpgp.encrypt({
-                message: openpgp.message.fromText(this.state.message_public),
-                publicKeys: publicKey
-            })
-            return result.data;
-        } catch (error) {
-            console.error(error);
-        }
+        this.setState({ encrypted_message: await Crypto.encrypt(this.state.message_public, this.state.public_key) })
     }
 
     render() {

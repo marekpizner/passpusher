@@ -1,9 +1,9 @@
 const openpgp = require('openpgp');
 
-const generateNewPair = async (name, email, secret) => {
+const generateNewPair = async (name_i, email_i, secret, rsa_bits = 4096) => {
     const key = await openpgp.generateKey({
-        userIds: [{ name: name, email: email }],
-        rsaBits: 4096,
+        userIds: [{ name: name_i, email: email_i }],
+        rsaBits: rsa_bits,
         passphrase: secret
     });
     return key;

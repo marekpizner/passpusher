@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form, Button, Message, TextArea } from 'semantic-ui-react'
-import decrypt from '../cryptoTool/Crypto'
+import Crypto from '../cryptoTool/Crypto'
 
 class GetPassword extends React.Component {
 
@@ -28,7 +28,7 @@ class GetPassword extends React.Component {
 
     handleEncryptSumbit = async () => {
         const passphrase = this.getPasswordFromuser();
-        const password = await decrypt(this.state.password, this.state.private_key, passphrase)
+        const password = await Crypto.decrypt(this.state.password, this.state.private_key, passphrase)
         this.setState({ encrypted: false, password: password })
     }
 
@@ -61,15 +61,11 @@ class GetPassword extends React.Component {
         }
     }
 
-    render() {
-        var content;
-
+    renderContent() {
         var number_of_views_content = this.getNumberOfViews();
-
-
         if (this.state.errors === undefined || this.state.errors.lengt === 0) {
             if (this.state.encrypted) {
-                content = (
+                return (
                     <Form onSubmit={this.handleEncryptSumbit}>
                         <Form.Field>
                             <label>Password is: </label>
@@ -88,7 +84,7 @@ class GetPassword extends React.Component {
                 )
             }
             else {
-                content = (
+                return (
                     <Form onSubmit={this.handleSubmit}>
                         <Form.Field>
                             <label>Password is: {this.state.password}</label>
@@ -101,17 +97,19 @@ class GetPassword extends React.Component {
                 )
             }
         } else {
-            content = (
+            return (
                 <Message negative>
                     <Message.Header>Error: {this.state.errors}</Message.Header>
                 </Message>
             )
         }
+    }
 
+    render() {
         return (
             <div>
                 <h2>Get password</h2>
-                {content}
+                {this.renderContent()}
             </div>
         )
     }

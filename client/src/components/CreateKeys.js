@@ -1,7 +1,7 @@
 import React from 'react';
 import "react-input-range/lib/css/index.css";
 import { Form, Button, Message, TextArea, Grid } from 'semantic-ui-react'
-import generateNewPair from '../cryptoTool/Crypto'
+import Crypto from '../cryptoTool/Crypto'
 
 class CreateKeys extends React.Component {
 
@@ -38,9 +38,10 @@ class CreateKeys extends React.Component {
         }
     }
 
-    onSubmit = async () => {
+    onSubmit = async (event) => {
+        event.preventDefault();
         if (this.valuesCheck()) {
-            const keys = await generateNewPair(this.state.name, this.state.email, this.state.secret_1);
+            const keys = await Crypto.generateNewPair(this.state.name, this.state.email, this.state.secret_1);
             console.log(keys);
             this.setState({ private_key: keys.privateKeyArmored, public_key: keys.publicKeyArmored });
         }

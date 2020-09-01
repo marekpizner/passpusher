@@ -22,7 +22,6 @@ class AddPassword extends React.Component {
         };
     }
 
-
     handleCopyToClipboard = (event) => {
         navigator.clipboard.writeText(this.state.url)
     }
@@ -36,6 +35,7 @@ class AddPassword extends React.Component {
     }
 
     handleSubmit = async (event) => {
+        event.preventDefault();
         var password = this.state.password;
         this.setState({ encrypted: false })
 
@@ -66,7 +66,6 @@ class AddPassword extends React.Component {
         } else {
             this.setState({ errors: [...this.state.errors, 'Sending password to server!'] })
         }
-        event.preventDefault();
     }
 
     render() {
