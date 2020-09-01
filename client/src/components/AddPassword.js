@@ -3,7 +3,7 @@ import InputRange from 'react-input-range';
 import "react-input-range/lib/css/index.css";
 import { Form, Button, Message, Checkbox, TextArea } from 'semantic-ui-react'
 import axios from 'axios';
-import encrypt from '../cryptoTool/Crypto'
+import Crypto from '../cryptoTool/Crypto'
 
 class AddPassword extends React.Component {
 
@@ -41,7 +41,7 @@ class AddPassword extends React.Component {
 
         if (this.state.public_key !== '') {
             this.setState({ encrypted: true })
-            password = await encrypt(this.state.password, this.state.public_key);
+            password = await Crypto.encrypt(this.state.password, this.state.public_key);
         }
 
         if (this.readyToSend()) {
