@@ -7,7 +7,8 @@ class AboutMe extends React.Component {
     render() {
         return (
             <div>
-                <h2>Hi this is tool for pushing paswords, generating ssh keys, encrypting/decrypting messages</h2>
+                <h1>Passpusher</h1>
+                <p>Hi this is tool for sharing sensitive informations on the internet, generating ssh keys, encrypting/decrypting messages</p>
             </div>
         )
     }
