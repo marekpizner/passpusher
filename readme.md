@@ -1,5 +1,5 @@
 # Passpusher
-This project is password pusher tool. Main idea behind this is to share sensitive information on the internet. Passpusher create secret link that allow anyone to see secret information. You are albe to set up maximu numbers of views, time to link expiration and also encrypt secret inforamtions. All sensitive data are procesed in your browser and no sensitive information are shared on the internet.
+This project is a password pusher tool. The main idea behind this is to share sensitive information on the internet. Passpusher creates a secret link that allows anyone to see secret information. You are able to set up maximum numbers of views, time to link expiration, and also encrypt secret information. All sensitive data are processed in your browser and no sensitive information is shared on the internet.
 
 Use cases:
 - share sensitive information
